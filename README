@@ -1,0 +1,44 @@
+                        _              _       _          _
+   _ __    __ _  ___   | |_ ___   ___ | |___  | | ___  __| |
+  | '__|  / _` |/ _ \  | __/ _ \ / _ \| / __| | |/ _ \/ _` |
+  | |    | (_| | (_) | | || (_) | (_) | \__ \ | |  __/ (_| |
+  |_|     \__, |\___/   \__\___/ \___/|_|___/ |_|\___|\__,_|
+          |___/
+  https://uninformativ.de/git/r-go-tools-led
+  https://uninformativ.de/bugs.html
+
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+
+A set of tools to work with the special LED on R-Go Tools Split
+keyboards on GNU/Linux.
+
+
+Installation
+------------
+
+r-go-led, the program to set the state of the LED, uses the hidraw
+interface of Linux. This means you need to have the Linux API headers
+for your kernel installed during compilation.
+
+x11idle needs libX11 and libXss to query the state of the X11
+screensaver extension.
+
+To compile these two programs, run:
+
+    $ make
+
+
+Running
+-------
+
+Run r-go-led without arguments for a short summary of options. During
+runtime, this program needs access to /dev/hidraw* -- use sudo or udev
+rules for that.
+
+x11idle just prints the current X11 idle time.
+
+r-go-break-reminder combines both tools. It detects long streaks of user
+activity and then activates the LED, until the user took a break for a
+while. It expects that the other two tools are available in your $PATH.

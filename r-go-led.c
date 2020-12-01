@@ -215,7 +215,7 @@ main(int argc, char **argv)
     if (rgo_color == RGO_LED_COLOR_UNCHANGED && !change_standard_leds)
     {
         fprintf(stderr, "Need one of [-r|-g|-y|-o] to specify color "
-                        "or one of [-N|-C|-S|-O] to change standard LED\n");
+                        "or some of [-N|-C|-S|-O] to change standard LED\n");
         return 1;
     }
 

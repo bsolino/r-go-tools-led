@@ -15,13 +15,30 @@
 #include <linux/input.h>
 #include <linux/hidraw.h>
 
+/* Choose one. */
+enum RGoLEDColor
+{
+    RGO_LED_COLOR_UNCHANGED,
+    RGO_LED_COLOR_RED,
+    RGO_LED_COLOR_GREEN,
+    RGO_LED_COLOR_YELLOW,
+    RGO_LED_COLOR_OFF,
+};
+
+/* Bitmasks. */
+uint8_t STANDARD_LED_NUMLOCK = 1;
+uint8_t STANDARD_LED_CAPSLOCK = 2;
+uint8_t STANDARD_LED_SCROLLLOCK = 4;
+
 void
-set_leds(char *path, int16_t vendor, int16_t product,
-         uint8_t color_byte, uint8_t standard_leds, bool change_standard_leds)
+set_leds_on_hidraw(char *path, int16_t vendor, int16_t product,
+                   enum RGoLEDColor rgo_color, bool change_standard_leds,
+                   uint8_t standard_led_mask)
 {
     int fd;
     struct hidraw_devinfo info = {0};
-    uint8_t buf[8];
+    uint8_t buf[8] = {0};
+    uint8_t color_byte = 0;
 
     fd = open(path, change_standard_leds ? O_RDWR : O_RDONLY);
     if (fd == -1)
@@ -41,8 +58,17 @@ set_leds(char *path, int16_t vendor, int16_t product,
 
     if (info.vendor == vendor && info.product == product)
     {
-        if (color_byte != 0)
+        if (rgo_color != RGO_LED_COLOR_UNCHANGED)
         {
+            switch (rgo_color)
+            {
+                case RGO_LED_COLOR_RED:    color_byte = 0x01; break;
+                case RGO_LED_COLOR_GREEN:  color_byte = 0x02; break;
+                case RGO_LED_COLOR_YELLOW: color_byte = 0x03; break;
+                case RGO_LED_COLOR_OFF:    color_byte = 0x04; break;
+                case RGO_LED_COLOR_UNCHANGED: /* make compiler happy */ break;
+            }
+
             /* This ioctl() sends a "feature report" to the device.
              *
              * hidraw devices allow us to send "control transfer"
@@ -120,7 +146,7 @@ set_leds(char *path, int16_t vendor, int16_t product,
              * https://wiki.osdev.org/USB_Human_Interface_Devices#LED_lamps
              */
             buf[0] = 0x00;
-            buf[1] = standard_leds;
+            buf[1] = standard_led_mask;
             if (write(fd, buf, 2) < 0)
             {
                 fprintf(stderr, "ioctl for sending output report to %s: ", path);
@@ -132,35 +158,61 @@ set_leds(char *path, int16_t vendor, int16_t product,
     close(fd);
 }
 
+void
+set_leds(int16_t vendor, int16_t product, enum RGoLEDColor rgo_color,
+         bool change_standard_leds, uint8_t standard_led_mask)
+{
+    glob_t globres;
+    size_t path_i;
+
+    glob("/dev/hidraw*", GLOB_NOSORT, NULL, &globres);
+    for (path_i = 0; path_i < globres.gl_pathc; path_i++)
+    {
+        set_leds_on_hidraw(globres.gl_pathv[path_i], vendor, product,
+                           rgo_color, change_standard_leds, standard_led_mask);
+    }
+    globfree(&globres);
+}
+
 int
 main(int argc, char **argv)
 {
-    uint8_t color_byte = 0;
-    uint8_t standard_leds = 0;
+    enum RGoLEDColor rgo_color = RGO_LED_COLOR_UNCHANGED;
+    uint8_t standard_led_mask = 0;
     bool change_standard_leds = false;
     int16_t vendor = 0x0911, product = 0x2188;
     int opt;
-    glob_t globres;
-    size_t path_i;
 
     while ((opt = getopt(argc, argv, "rgyoNCSOv:p:")) != -1)
     {
         switch (opt)
         {
-            case 'r': color_byte = 0x01; break;
-            case 'g': color_byte = 0x02; break;
-            case 'y': color_byte = 0x03; break;
-            case 'o': color_byte = 0x04; break;
-            case 'N': standard_leds |= 1; change_standard_leds = true; break;
-            case 'C': standard_leds |= 2; change_standard_leds = true; break;
-            case 'S': standard_leds |= 4; change_standard_leds = true; break;
-            case 'O': standard_leds = 0; change_standard_leds = true; break;
+            case 'r': rgo_color = RGO_LED_COLOR_RED; break;
+            case 'g': rgo_color = RGO_LED_COLOR_GREEN; break;
+            case 'y': rgo_color = RGO_LED_COLOR_YELLOW; break;
+            case 'o': rgo_color = RGO_LED_COLOR_OFF; break;
+            case 'N':
+                standard_led_mask |= STANDARD_LED_NUMLOCK;
+                change_standard_leds = true;
+                break;
+            case 'C':
+                standard_led_mask |= STANDARD_LED_CAPSLOCK;
+                change_standard_leds = true;
+                break;
+            case 'S':
+                standard_led_mask |= STANDARD_LED_SCROLLLOCK;
+                change_standard_leds = true;
+                break;
+            case 'O':
+                standard_led_mask = 0;
+                change_standard_leds = true;
+                break;
             case 'v': vendor = atoi(optarg); break;
             case 'p': product = atoi(optarg); break;
         }
     }
 
-    if (color_byte == 0 && !change_standard_leds)
+    if (rgo_color == RGO_LED_COLOR_UNCHANGED && !change_standard_leds)
     {
         fprintf(stderr, "Need one of [-r|-g|-y|-o] to specify color "
                         "or one of [-N|-C|-S|-O] to change standard LED\n");
@@ -173,13 +225,7 @@ main(int argc, char **argv)
         return 1;
     }
 
-    glob("/dev/hidraw*", GLOB_NOSORT, NULL, &globres);
-    for (path_i = 0; path_i < globres.gl_pathc; path_i++)
-    {
-        set_leds(globres.gl_pathv[path_i], vendor, product,
-                 color_byte, standard_leds, change_standard_leds);
-    }
-    globfree(&globres);
+    set_leds(vendor, product, rgo_color, change_standard_leds, standard_led_mask);
 
     return 0;
 }

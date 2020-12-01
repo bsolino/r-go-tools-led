@@ -31,6 +31,6 @@ do
     then
         $sudo r-go-led -r
     else
-        $sudo r-go-led -o
+        $sudo r-go-led
     fi
 done

@@ -33,9 +33,9 @@ To compile these two programs, run:
 Running
 -------
 
-Run r-go-led without arguments for a short summary of options. During
-runtime, this program needs access to /dev/hidraw* -- use sudo or udev
-rules for that.
+r-go-led and standard-leds, which control the respective set of LEDs,
+need access to /dev/hidraw* during runtime. Use sudo or udev rules for
+that. Refer to the manpage for full list of options.
 
 x11idle just prints the current X11 idle time.
 

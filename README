@@ -27,7 +27,7 @@ To compile it, run:
     $ make
 
 The script r-go-break-reminder needs xprintidle (there is a package for
-it on Arch Linux):
+it on Arch Linux and Ubuntu):
 
     - https://github.com/g0hl1n/xprintidle
 

@@ -10,7 +10,6 @@ r-go-led \- control the special LED on R-Go Tools keyboards
 .\" --------------------------------------------------------------------
 .SH DESCRIPTION
 This program controls the special \(lqR\(rq LED on R-Go Tools keyboards.
-It needs access to all \fI/dev/hidraw*\fP files.
 .\" --------------------------------------------------------------------
 .SH OPTIONS
 When invoked without arguments, the LED will be turned \fBoff\fP.
@@ -22,6 +21,25 @@ Set the LED to red, green, or yellow.
 All \fI/dev/hidraw*\fP files that match these USB IDs will be operated
 on. These arguments default to a \fIvendorID\fP of \fB0911\fP and a
 \fIproductID\fP of \fB2188\fP.
+.\" --------------------------------------------------------------------
+.SH PERMISSIONS
+In order to send USB commands to the device, the program needs access to
+the corresponding hidraw file (one of \fI/dev/hidraw*\fP). The easiest
+way to accomplish this is to install a \fBsudo\fP(8) rule.
+.P
+Another option is to create a new system group for this purpose. You can
+then use a \fBudev\fP(7) rule to grant access:
+.P
+\f(CW
+.nf
+KERNEL=="hidraw*", \\
+    ATTRS{idVendor}=="0911", ATTRS{idProduct}=="2188", \\
+    GROUP="rgoled"
+.fi
+\fP
+.P
+Now, you can install the \fBr-go-led\fP binary as group \(lqrgoled\(rq
+and set the SGID bit.
 .\" --------------------------------------------------------------------
 .SH LICENSE
 \fBr-go-led\fP is released under the MIT license. See the accompanying

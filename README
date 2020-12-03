@@ -36,7 +36,8 @@ Running
 -------
 
 r-go-led needs access to /dev/hidraw* during runtime. Use sudo or udev
-rules for that. Refer to the manpage for full list of options.
+rules for that. Refer to the manpage for an example using udev, and of
+course for a full list of command line options.
 
 r-go-break-reminder detects long streaks of user activity and then
 activates the LED, until the user took a break for a while. It expects

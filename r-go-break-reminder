@@ -5,14 +5,14 @@ set -e
 
 max_work_duration_s=$((30 * 60))
 min_idle_duration_s=$((5 * 50))
-sudo=sudo
+sudo=
 
 while getopts i:w:S name
 do
     case "$name" in
         i) min_idle_duration_s=$OPTARG ;;
         w) max_work_duration_s=$OPTARG ;;
-        S) sudo= ;;
+        S) sudo=sudo ;;
     esac
 done
 

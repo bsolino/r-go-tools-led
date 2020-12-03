@@ -1,0 +1,32 @@
+.TH r-go-led 1 "2020-12-03" "r-go-led" "User Commands"
+.\" --------------------------------------------------------------------
+.SH NAME
+r-go-led \- control the special LED on R-Go Tools keyboards
+.\" --------------------------------------------------------------------
+.SH SYNOPSIS
+\fBr-go-led\fP [\fB\-r\fP|\fB\-g\fP|\fB\-y\fP]
+[\fB\-v\fP \fIvendorID\fP]
+[\fB\-p\fP \fIproductID\fP]
+.\" --------------------------------------------------------------------
+.SH DESCRIPTION
+This program controls the special \(lqR\(rq LED on R-Go Tools keyboards.
+It needs access to all \fI/dev/hidraw*\fP files.
+.\" --------------------------------------------------------------------
+.SH OPTIONS
+When invoked without arguments, the LED will be turned \fBoff\fP.
+.TP
+\fB\-r\fP, \fB\-g\fP, \fB\-y\fP
+Set the LED to red, green, or yellow.
+.TP
+\fB\-v\fP \fIvendorID\fP, \fB\-p\fP \fIproductID\fP
+All \fI/dev/hidraw*\fP files that match these USB IDs will be operated
+on. These arguments default to a \fIvendorID\fP of \fB0911\fP and a
+\fIproductID\fP of \fB2188\fP.
+.\" --------------------------------------------------------------------
+.SH LICENSE
+\fBr-go-led\fP is released under the MIT license. See the accompanying
+\fILICENSE\fP file.
+.\" --------------------------------------------------------------------
+.SH HISTORY
+\fBr-go-led\fP was originally written by Peter Hofmann. The project
+was started in November 2020.

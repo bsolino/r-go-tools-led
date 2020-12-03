@@ -22,12 +22,14 @@ r-go-led, the program to set the state of the LED, uses the hidraw
 interface of Linux. This means you need to have the Linux API headers
 for your kernel installed during compilation.
 
-x11idle needs libX11 and libXss to query the state of the X11
-screensaver extension.
-
-To compile these two programs, run:
+To compile it, run:
 
     $ make
+
+The script r-go-break-reminder needs xprintidle (there is a package for
+it on Arch Linux):
+
+    - https://github.com/g0hl1n/xprintidle
 
 
 Running
@@ -36,8 +38,6 @@ Running
 r-go-led needs access to /dev/hidraw* during runtime. Use sudo or udev
 rules for that. Refer to the manpage for full list of options.
 
-x11idle just prints the current X11 idle time.
-
-r-go-break-reminder combines both tools. It detects long streaks of user
-activity and then activates the LED, until the user took a break for a
-while. It expects that the other two tools are available in your $PATH.
+r-go-break-reminder detects long streaks of user activity and then
+activates the LED, until the user took a break for a while. It expects
+that r-go-led is available in your $PATH.

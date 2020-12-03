@@ -21,7 +21,7 @@ last_good_idle=$(date +%s)
 while sleep 15
 do
     now=$(date +%s)
-    now_idle=$(x11idle)
+    now_idle=$(xprintidle)
     if [ $((now_idle / 1000)) -ge "$min_idle_duration_s" ]
     then
         last_good_idle=$now

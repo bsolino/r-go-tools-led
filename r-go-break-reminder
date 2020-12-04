@@ -9,14 +9,14 @@ sudo=
 vendorid=
 productid=
 
-while getopts i:w:v:p:S name
+while getopts i:w:v:p:s name
 do
     case "$name" in
         i) min_idle_duration_s=$OPTARG ;;
         w) max_work_duration_s=$OPTARG ;;
         v) vendorid="-v $OPTARG" ;;
         p) productid="-p $OPTARG" ;;
-        S) sudo=sudo ;;
+        s) sudo=sudo ;;
     esac
 done
 

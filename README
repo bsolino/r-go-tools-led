@@ -27,18 +27,36 @@ To compile it, run:
     $ make
 
 The script r-go-break-reminder needs xprintidle (there is a package for
-it on Arch Linux and Ubuntu):
+it on Arch Linux and Ubuntu and possible other distributions as well):
 
     - https://github.com/g0hl1n/xprintidle
+
+r-go-break-reminder expects that both xprintidle and r-go-led are
+available in your $PATH.
+
+r-go-led needs access to /dev/hidraw* during runtime. For quick tests,
+using sudo is a good option. A better setup might be using a dedicated
+system group and a udev rule such as:
+
+    KERNEL=="hidraw*", \
+        ATTRS{idVendor}=="0911", ATTRS{idProduct}=="2188", \
+        GROUP="rgoled"
+
+This makes the device nodes accessible to the group "rgoled". You can
+now install the r-go-led binary as group "rgoled" and with the SGID bit
+set to grant it the appropriate permissions during runtime.
 
 
 Running
 -------
 
-r-go-led needs access to /dev/hidraw* during runtime. Use sudo or udev
-rules for that. Refer to the manpage for an example using udev, and of
-course for a full list of command line options.
+r-go-led is meant to be run from the command line or from other scripts.
+Refer to the manpage for a full list of options. For example, this sets
+the LED to green:
+
+    $ r-go-led -g
 
 r-go-break-reminder detects long streaks of user activity and then
-activates the LED, until the user took a break for a while. It expects
-that r-go-led is available in your $PATH.
+activates the LED, until the user took a break for a while. You should
+probably launch it from your ~/.xinitrc. Again, the manpage lists all
+options.

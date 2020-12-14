@@ -1,4 +1,4 @@
-.TH r-go-break-reminder 1 "2020-12-05" "r-go-tools-led"
+.TH r-go-break-reminder 1 "2020-12-14" "r-go-tools-led"
 .\" --------------------------------------------------------------------
 .SH NAME
 r-go-break-reminder \- light up the LED on R-Go Tools keyboards after long streaks of typing
@@ -19,7 +19,8 @@ using the special \(lqR\(rq LED on R-Go Tools keyboards.
 .TP
 \fB\-i\fP \fImin_idle\fP, \fB\-w\fP \fImax_work\fP
 After using the computer for \fImax_work\fP seconds, the LED will be
-turned on, until you made a break for at least \fImin_idle\fP seconds.
+turned on (red), until you made a break for at least \fImin_idle\fP
+seconds (green LED).
 .TP
 \fB\-s\fP
 Call \fBr-go-led\fP using \fBsudo\fP(8).

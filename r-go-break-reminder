@@ -29,12 +29,13 @@ do
     if [ $((now_idle / 1000)) -ge "$min_idle_duration_s" ]
     then
         last_good_idle=$now
-    fi
-
-    if [ $((now - last_good_idle)) -ge "$max_work_duration_s" ]
-    then
-        $sudo r-go-led $vendorid $productid -r
+        $sudo r-go-led $vendorid $productid -g
     else
-        $sudo r-go-led $vendorid $productid
+        if [ $((now - last_good_idle)) -ge "$max_work_duration_s" ]
+        then
+            $sudo r-go-led $vendorid $productid -r
+        else
+            $sudo r-go-led $vendorid $productid
+        fi
     fi
 done

@@ -1,6 +1,6 @@
 Release history for r-go-tools-led
 
-next
+v21.01  2021-01-17
   [Changed]
   - r-go-break-reminder: LED will be set to green, if configured idle
     time has been reached. It goes back to "off" during the "working"

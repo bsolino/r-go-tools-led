@@ -9,18 +9,25 @@ sudo=
 vendorid=
 productid=
 
-while getopts i:w:v:p:s name
+while getopts i:w:v:p:s: name
 do
     case "$name" in
         i) min_idle_duration_s=$OPTARG ;;
         w) max_work_duration_s=$OPTARG ;;
         v) vendorid="-v $OPTARG" ;;
         p) productid="-p $OPTARG" ;;
-        s) sudo=sudo ;;
+        s) sudo=$OPTARG ;;
     esac
 done
 
 last_good_idle=$(date +%s)
+
+r_go_led=$(which r-go-led 2>/dev/null)
+if [ -z "$r_go_led" ]
+then
+    echo 'Cannot find binary r-go-led' >&2
+    exit 1
+fi
 
 while sleep 15
 do
@@ -29,13 +36,13 @@ do
     if [ $((now_idle / 1000)) -ge "$min_idle_duration_s" ]
     then
         last_good_idle=$now
-        $sudo r-go-led $vendorid $productid -g
+        $sudo $r_go_led $vendorid $productid -g
     else
         if [ $((now - last_good_idle)) -ge "$max_work_duration_s" ]
         then
-            $sudo r-go-led $vendorid $productid -r
+            $sudo $r_go_led $vendorid $productid -r
         else
-            $sudo r-go-led $vendorid $productid
+            $sudo $r_go_led $vendorid $productid
         fi
     fi
 done
